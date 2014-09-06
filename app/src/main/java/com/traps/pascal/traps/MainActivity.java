@@ -12,17 +12,22 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.location.LocationListener;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 import java.util.Locale;
 
 
 public class MainActivity extends Activity {
+
+    String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,15 @@ public class MainActivity extends Activity {
             Location startLocation = getStartLocation();
             Log.d("StartLcoation", startLocation.toString());
 
+            TextView latitude = (TextView)findViewById(R.id.latitude_data);
+            TextView longitude = (TextView)findViewById(R.id.longitude_data);
+            TextView altitude = (TextView)findViewById(R.id.altitude_data);
+            TextView addressTextView = (TextView)findViewById(R.id.address_data);
 
+            latitude.setText(startLocation.getLatitude()+"");
+            longitude.setText(startLocation.getLongitude()+"");
+            altitude.setText(startLocation.getAltitude()+"");
+            addressTextView.setText(address);
         } else {
             //What to do??
         }
@@ -88,7 +101,6 @@ public class MainActivity extends Activity {
         double latitude = 0.0;
         double altitude = 0.0;
         String provider;
-        String address;
         Geocoder geocoder;
 
         LocationManager locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
