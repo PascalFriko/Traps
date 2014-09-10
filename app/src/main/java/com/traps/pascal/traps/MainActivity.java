@@ -8,6 +8,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -19,8 +21,6 @@ import android.location.LocationListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -28,6 +28,7 @@ import java.util.Locale;
 public class MainActivity extends Activity {
 
     String address;
+    int DebugCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +39,27 @@ public class MainActivity extends Activity {
         if (checkGooglePlayServices()) {
             Log.d("Google Play Services", "Success");
 
-            Location startLocation = getStartLocation();
-            Log.d("StartLcoation", startLocation.toString());
+            final Handler LocationHandler = new Handler(Looper.getMainLooper());
+            LocationHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Location startLocation = getStartLocation();
+                    Log.d("StartLcoation", startLocation.toString());
 
-            TextView latitude = (TextView)findViewById(R.id.latitude_data);
-            TextView longitude = (TextView)findViewById(R.id.longitude_data);
-            TextView altitude = (TextView)findViewById(R.id.altitude_data);
-            TextView addressTextView = (TextView)findViewById(R.id.address_data);
+                    TextView latitude = (TextView)findViewById(R.id.latitude_data);
+                    TextView longitude = (TextView)findViewById(R.id.longitude_data);
+                    TextView altitude = (TextView)findViewById(R.id.altitude_data);
+                    TextView addressTextView = (TextView)findViewById(R.id.address_data);
 
-            latitude.setText(startLocation.getLatitude()+"");
-            longitude.setText(startLocation.getLongitude()+"");
-            altitude.setText(startLocation.getAltitude()+"");
-            addressTextView.setText(address);
+                    latitude.setText(startLocation.getLatitude()+"");
+                    longitude.setText(startLocation.getLongitude()+"");
+                    altitude.setText(startLocation.getAltitude()+"");
+                    addressTextView.setText(address);
+
+                    Log.d("DebugCount", ""+DebugCount++);
+                    LocationHandler.postDelayed(this, 1000);
+                }
+            });
         } else {
             //What to do??
         }
@@ -95,6 +105,10 @@ public class MainActivity extends Activity {
         return false;
     }
 
+    /**
+     * Initial Location of the User is determined
+     * @return Location of the User at the start of the App
+     */
     private Location getStartLocation() {
         Location location = null;
         double longitude = 0.0;
@@ -121,7 +135,7 @@ public class MainActivity extends Activity {
             provider = LocationManager.PASSIVE_PROVIDER;
             locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,0,0,myLocationListener);
         }
-
+        Log.d("Provider", provider);
         location = locationManager.getLastKnownLocation(provider);
         if (location != null) {
             longitude = location.getLongitude();
@@ -154,6 +168,9 @@ public class MainActivity extends Activity {
 
     }
 
+    /**
+     * Needed to get the initial Location of the User
+     */
     private class MyLocationListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
