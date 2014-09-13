@@ -28,7 +28,6 @@ import java.util.Locale;
 public class MainActivity extends Activity {
 
     String address;
-    int DebugCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,27 +38,20 @@ public class MainActivity extends Activity {
         if (checkGooglePlayServices()) {
             Log.d("Google Play Services", "Success");
 
-            final Handler LocationHandler = new Handler(Looper.getMainLooper());
-            LocationHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Location startLocation = getStartLocation();
-                    Log.d("StartLcoation", startLocation.toString());
+            Location startLocation = getStartLocation();
+                TextView latitude = (TextView)findViewById(R.id.latitude_data);
+                TextView longitude = (TextView)findViewById(R.id.longitude_data);
+                TextView altitude = (TextView)findViewById(R.id.altitude_data);
+                TextView addressTextView = (TextView)findViewById(R.id.address_data);
 
-                    TextView latitude = (TextView)findViewById(R.id.latitude_data);
-                    TextView longitude = (TextView)findViewById(R.id.longitude_data);
-                    TextView altitude = (TextView)findViewById(R.id.altitude_data);
-                    TextView addressTextView = (TextView)findViewById(R.id.address_data);
+                latitude.setText(startLocation.getLatitude()+"");
+                longitude.setText(startLocation.getLongitude()+"");
+                altitude.setText(startLocation.getAltitude()+"");
+                addressTextView.setText(address);
 
-                    latitude.setText(startLocation.getLatitude()+"");
-                    longitude.setText(startLocation.getLongitude()+"");
-                    altitude.setText(startLocation.getAltitude()+"");
-                    addressTextView.setText(address);
-
-                    Log.d("DebugCount", ""+DebugCount++);
-                    LocationHandler.postDelayed(this, 1000);
-                }
-            });
+            String url = "http://ip.jsontest.com/";
+            GetAllTraps getAllTraps = new GetAllTraps();
+            getAllTraps.getJSONfromURL(url);
         } else {
             //What to do??
         }
